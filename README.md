@@ -128,11 +128,11 @@ See [`requirements.txt`](./requirements.txt) for the exact pinned version.
 
 > _Add screenshots of the CLI in action here, e.g.:_
 
-```
+
 ![Main Menu](images/mainMenu.png)
 ![Viewing A Saved Record](images/savedRec.png)
 ![Password Generator](images/passGen.png)
-```
+
 
 ---
 
