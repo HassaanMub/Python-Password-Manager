@@ -126,7 +126,7 @@ See [`requirements.txt`](./requirements.txt) for the exact pinned version.
 
 ## 🖼️ Screenshots
 
-> _Add screenshots of the CLI in action here, e.g.:_
+> Screenshots of the CLI in action
 
 
 ![Main Menu](images/mainMenu.png)
