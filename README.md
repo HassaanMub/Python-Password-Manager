@@ -1,30 +1,30 @@
 # 🔐 Password Manager
 
-A clean, modular, console-based Password Manager built with Python 3 — designed as a real-world portfolio project rather than a single-file beginner script.
+A clean, modular, console-based Password Manager built with Python 3 - designed as a real-world portfolio project rather than a single-file beginner script.
 
-The project follows object-oriented design principles with a clear separation between **data models**, **persistence/business logic**, **utility functions**, and the **presentation layer** (CLI menus).
+The project follows Object Oriented design principles with a clear separation between **data models**, **persistence/business logic**, **utility functions**, and the **presentation layer** (CLI menus).
 
 ---
 
 ## ✨ Features
 
 ### Core Features
-- **Save New Record** — store credentials with title, category, and login method (custom or Google-linked).
-- **Show All Records** — view a clean list of saved entries; select one to see full details (no raw JSON dumps).
-- **Search Records** — partial, case-insensitive search across title, category, email, and website (e.g. searching `git` matches both *Github* and *GitLab*).
-- **Edit Record** — update any field; leave input blank to keep the existing value. `updated_at` is refreshed automatically.
-- **Delete Record** — requires explicit confirmation before removing data.
-- **Google Account Management** — maintain a separate list of linked Google accounts, with duplicate-email protection.
-- **Password Generator** — cryptographically secure password generation (via Python's `secrets` module) with configurable length and character sets (uppercase, lowercase, numbers, symbols). Can be used standalone or while creating a new record.
-- **Sort Records** — by title, category, newest, oldest, or favorites-first.
-- **Favorites** — mark/unmark any record as a favorite.
-- **Copy Password to Clipboard** — via `pyperclip`, with graceful fallback if no clipboard backend is available.
+- **Save New Record** - store credentials with title, category, and login method (custom or Google-linked).
+- **Show All Records** - view a clean list of saved entries; select one to see full details (no raw JSON dumps).
+- **Search Records** - partial, case-insensitive search across title, category, email, and website (e.g. searching `git` matches both *Github* and *GitLab*).
+- **Edit Record** - update any field; leave input blank to keep the existing value. `updated_at` is refreshed automatically.
+- **Delete Record** - requires explicit confirmation before removing data.
+- **Google Account Management** - maintain a separate list of linked Google accounts, with duplicate-email protection.
+- **Password Generator** - cryptographically secure password generation (via Python's `secrets` module) with configurable length and character sets (uppercase, lowercase, numbers, symbols). Can be used standalone or while creating a new record.
+- **Sort Records** - by title, category, newest, oldest, or favorites-first.
+- **Favorites** - mark/unmark any record as a favorite.
+- **Copy Password to Clipboard** - via `pyperclip`, with graceful fallback if no clipboard backend is available.
 
 ### Bonus Features
-- **Password Strength Checker** — rates any password from *Very Weak* to *Very Strong* based on length and character variety.
-- **Statistics Dashboard** — total passwords, favorites, Google-linked accounts, and custom accounts.
-- **Export Backup** — dump all current data to a separate JSON backup file.
-- **Import Backup** — restore or merge data from a backup JSON file.
+- **Password Strength Checker** - rates any password from *Very Weak* to *Very Strong* based on length and character variety.
+- **Statistics Dashboard** - total passwords, favorites, Google-linked accounts, and custom accounts.
+- **Export Backup** - dump all current data to a separate JSON backup file.
+- **Import Backup** - restore or merge data from a backup JSON file.
 
 ### Robustness
 - Automatic creation of `passwords.json` if it doesn't exist.
@@ -129,9 +129,9 @@ See [`requirements.txt`](./requirements.txt) for the exact pinned version.
 > _Add screenshots of the CLI in action here, e.g.:_
 
 ```
-[ screenshot: main menu ]
-[ screenshot: viewing a saved record's details ]
-[ screenshot: password generator output ]
+![Main Menu](mainMenu.png)
+![Viewing A Saved Record](savedRec.png)
+![Password Generator](passGen.png)
 ```
 
 ---
