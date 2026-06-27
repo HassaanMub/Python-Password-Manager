@@ -130,7 +130,9 @@ See [`requirements.txt`](./requirements.txt) for the exact pinned version.
 
 
 ![Main Menu](images/mainMenu.png)
+
 ![Viewing A Saved Record](images/savedRec.png)
+
 ![Password Generator](images/passGen.png)
 
 
