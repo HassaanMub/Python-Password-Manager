@@ -52,7 +52,7 @@ class PasswordManagerApp:
         while True:
             try:
                 self._show_main_menu()
-                choice = input("\nSelect an option (1-16): ").strip()
+                choice = input("\nSelect an option (1-15): ").strip()
                 self._dispatch(choice)
             except KeyboardInterrupt:
                 print("\n\nInterrupted. Exiting safely. Goodbye!")
@@ -74,12 +74,11 @@ class PasswordManagerApp:
         print("8. Password Generator")
         print("9. Sort Records")
         print("10. Toggle Favorite")
-        print("11. Copy Password to Clipboard")
-        print("12. Exit")
-        print("13. Statistics")
-        print("14. Export Backup")
-        print("15. Import Backup")
-        print("16. Password Strength Checker")
+        print("11. Exit")
+        print("12. Statistics")
+        print("13. Export Backup")
+        print("14. Import Backup")
+        print("15. Password Strength Checker")
         utils.print_divider()
     def _dispatch(self, choice: str) -> None:
         """Route a menu choice to the corresponding handler method.
@@ -97,16 +96,15 @@ class PasswordManagerApp:
             "8": self.password_generator_menu,
             "9": self.sort_records_menu,
             "10": self.toggle_favorite,
-            "11": self.copy_password_menu,
-            "12": self.exit_app,
-            "13": self.show_statistics,
-            "14": self.export_backup_menu,
-            "15": self.import_backup_menu,
-            "16": self.password_strength_checker,
+            "11": self.exit_app,
+            "12": self.show_statistics,
+            "13": self.export_backup_menu,
+            "14": self.import_backup_menu,
+            "15": self.password_strength_checker,
         }
         action = actions.get(choice)
         if action is None:
-            print("Invalid Option! Please choose a number from 1 to 16.")
+            print("Invalid Option! Please choose a number from 1 to 15.")
             return
         action()
     # ------------------------------------------------------------------
@@ -556,34 +554,8 @@ class PasswordManagerApp:
         print(f"'{record.title}' has been {status}.")
 
     # ------------------------------------------------------------------
-    # Feature: Copy Password to Clipboard
+    # Feature: Copy Password to Clipboard (used by Password Generator)
     # ------------------------------------------------------------------
-
-    def copy_password_menu(self) -> None:
-        """Copy a chosen record's password (or Google email) to clipboard."""
-        utils.print_header("COPY TO CLIPBOARD")
-        if not self.manager.records:
-            print("No records available.")
-            return
-
-        self._list_records(self.manager.records)
-        index = utils.prompt_int(
-            "Enter the number of the record to copy",
-            minimum=1,
-            maximum=len(self.manager.records),
-        )
-        record = self.manager.get_record_by_index(index)
-        if record is None:
-            print("Invalid Record Number.")
-            return
-
-        if record.login_type == "google":
-            print(
-                "This is a Google-linked record; there is no stored password "
-                f"(linked account: {record.google_email})."
-            )
-            return
-        self._copy_with_feedback(record.password)
 
     def _copy_with_feedback(self, text: str) -> None:
         """Attempt to copy text to clipboard and report the outcome.

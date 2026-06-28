@@ -15,16 +15,16 @@ The project follows Object Oriented design principles with a clear separation be
 - **Edit Record** - update any field; leave input blank to keep the existing value. `updated_at` is refreshed automatically.
 - **Delete Record** - requires explicit confirmation before removing data.
 - **Google Account Management** - maintain a separate list of linked Google accounts, with duplicate-email protection.
-- **Password Generator** - cryptographically secure password generation (via Python's `secrets` module) with configurable length and character sets (uppercase, lowercase, numbers, symbols). Can be used standalone or while creating a new record.
+- **Password Generator** - cryptographically secure password generation (via Python's `secrets` module) with configurable length and character sets (uppercase, lowercase, numbers, symbols). Can be used standalone or while creating a new record. Includes an option to **copy the generated password to clipboard** right after it's created.
 - **Sort Records** - by title, category, newest, oldest, or favorites-first.
 - **Favorites** - mark/unmark any record as a favorite.
-- **Copy Password to Clipboard** - via `pyperclip`, with graceful fallback if no clipboard backend is available.
 
 ### Bonus Features
 - **Password Strength Checker** - rates any password from *Very Weak* to *Very Strong* based on length and character variety.
 - **Statistics Dashboard** - total passwords, favorites, Google-linked accounts, and custom accounts.
 - **Export Backup** - dump all current data to a separate JSON backup file.
 - **Import Backup** - restore or merge data from a backup JSON file.
+- **Plain-Text Record Log** - every new record saved is also appended to a human-readable `passwords.txt` file alongside the main JSON storage. See [Text Log File](#-text-log-file) below for details.
 
 ### Robustness
 - Automatic creation of `passwords.json` if it doesn't exist.
@@ -44,6 +44,7 @@ PasswordManager/
 ├── models.py          # PasswordRecord & GoogleAccount dataclasses
 ├── utils.py           # Validation, password generation, clipboard helpers
 ├── passwords.json     # Data storage (auto-created if missing)
+├── passwords.txt      # Plain-text append-only record log (auto-created if missing)
 ├── requirements.txt   # Project dependencies
 └── README.md          # This file
 ```
@@ -58,6 +59,37 @@ PasswordManager/
 | `main.py` | The console UI layer — builds menus, gathers input, and delegates everything else to the modules above. |
 
 This separation means the storage layer or the UI could each be swapped out (e.g. replacing the CLI with a GUI, or swapping JSON for a database) with minimal impact on the rest of the codebase.
+
+---
+
+## 📝 Text Log File
+
+In addition to the primary `passwords.json` storage, every record you save also gets appended to a plain-text file (`passwords.txt` by default, matching the JSON filename).
+
+**This file is write-only from the application's perspective:**
+- It is **only ever appended to** — a new block is added each time you save a record.
+- It is **never read from**, and the app **never loads data from it**. `passwords.json` remains the single source of truth for everything the app displays, edits, searches, sorts, exports, or imports.
+- If you delete or edit a record afterward, the text file is **not** updated retroactively — it's a running log of records as they were saved, not a live mirror of current state.
+
+Only a reduced subset of fields is written, one block per record:
+
+- **Custom credentials:** Title, Username *(if set)*, Phone *(if set)*, Email, Password
+- **Google-linked records:** Title, Google Email, and a `Linked to Google` marker (no password is stored for these, since none is held locally)
+
+Example entries:
+
+```
+Title: GitHub
+Username: devuser
+Phone: 555-1234
+Email: dev@example.com
+Password: S3cr3t!
+------------------------------
+Title: YouTube
+Google Email: myacc@gmail.com
+Linked to Google
+------------------------------
+```
 
 ---
 
@@ -100,16 +132,17 @@ You'll be greeted with the main menu:
 8. Password Generator
 9. Sort Records
 10. Toggle Favorite
-11. Copy Password to Clipboard
-12. Exit
-13. Statistics
-14. Export Backup
-15. Import Backup
-16. Password Strength Checker
+11. Exit
+12. Statistics
+13. Export Backup
+14. Import Backup
+15. Password Strength Checker
 ------------------------------------------
 ```
 
 Simply enter the number corresponding to the action you want to perform, and follow the prompts. Required fields will keep re-prompting until valid input is given; optional fields can be left blank.
+
+> **Note:** "Copy Password to Clipboard" is no longer a standalone main menu item — it's now offered automatically right after a password is generated in the **Password Generator** (option 8), since that's the moment you're most likely to want it copied.
 
 ---
 
@@ -129,7 +162,7 @@ See [`requirements.txt`](./requirements.txt) for the exact pinned version.
 > Screenshots of the CLI in action
 
 
-![Main Menu](images/mainMenu.png)
+![Main Menu](images/mainMenu2.png)
 
 ![Viewing A Saved Record](images/savedRec.png)
 
@@ -140,7 +173,7 @@ See [`requirements.txt`](./requirements.txt) for the exact pinned version.
 
 ## 🚀 Future Improvements
 
-- [ ] Encrypt stored passwords at rest (e.g. using `cryptography`'s Fernet symmetric encryption) instead of storing them in plain text JSON.
+- [ ] Encrypt stored passwords at rest (e.g. using `cryptography`'s Fernet symmetric encryption) instead of storing them in plain text JSON/text files.
 - [ ] Add a master password / login gate to the application itself.
 - [ ] Migrate storage to SQLite for better scalability with large datasets.
 - [ ] Build a GUI (Tkinter, PyQt) or web front-end (Flask/FastAPI) on top of the existing `manager.py` business logic, without touching the data layer.
@@ -153,7 +186,7 @@ See [`requirements.txt`](./requirements.txt) for the exact pinned version.
 
 ## ⚠️ Disclaimer
 
-This project stores passwords in a local JSON file **without encryption**, by design, to keep the focus on clean architecture and Python fundamentals. It is intended as a learning/portfolio project and **should not be used to store real, sensitive credentials** in its current form. See the *Future Improvements* section for how this could be hardened for production use.
+This project stores passwords in a local JSON file **and** appends them to a plain-text log file, **without encryption**, by design, to keep the focus on clean architecture and Python fundamentals. It is intended as a learning/portfolio project and **should not be used to store real, sensitive credentials** in its current form. See the *Future Improvements* section for how this could be hardened for production use.
 
 ---
 

@@ -42,14 +42,23 @@ class PasswordManager:
             Google accounts.
     """
 
-    def __init__(self, file_path: str = "passwords.json") -> None:
+    def __init__(self, file_path: str = "passwords.json", text_file_path: Optional[str] = None) -> None:
         """Initialize the manager and load existing data from disk.
 
         Args:
             file_path (str): Path to the JSON file used for storage.
                 The file is created automatically if it does not exist.
+            text_file_path (Optional[str]): Path to a plain-text log file
+                that new records are appended to. Defaults to the same
+                name as ``file_path`` with a ``.txt`` extension. This file
+                is write-only/append-only from the application's point of
+                view -- it is never read from or used to load data.
         """
         self.file_path = file_path
+        if text_file_path is None:
+            base, _ = os.path.splitext(file_path)
+            text_file_path = f"{base}.txt"
+        self.text_file_path = text_file_path
         self.records: List[PasswordRecord] = []
         self.google_accounts: List[GoogleAccount] = []
         self._load()
@@ -142,6 +151,42 @@ class PasswordManager:
             "google_accounts": [a.to_dict() for a in self.google_accounts],
         }
         self._write_data(data)
+
+    def _append_record_to_text_file(self, record: PasswordRecord) -> None:
+        """Append a single record's summary to the plain-text log file.
+
+        This is append-only: the text file is never read from or used
+        to load application state. The JSON file remains the sole
+        source of truth; this file exists purely as a human-readable
+        running log. Only a subset of fields is written:
+        title, username (if present), phone (if present), email,
+        and password -- or, for Google-linked records, the linked
+        Google email together with a "Linked to Google" marker.
+
+        Args:
+            record (PasswordRecord): The record to log.
+
+        Raises:
+            StorageError: If the text file cannot be written to.
+        """
+        lines = [f"Title: {record.title}"]
+        if record.login_type == "google":
+            lines.append(f"Google Email: {record.google_email}")
+            lines.append("Linked to Google")
+        else:
+            if record.username:
+                lines.append(f"Username: {record.username}")
+            if record.phone:
+                lines.append(f"Phone: {record.phone}")
+            lines.append(f"Email: {record.email}")
+            lines.append(f"Password: {record.password}")
+        entry = "\n".join(lines) + "\n" + ("-" * 30) + "\n"
+        try:
+            with open(self.text_file_path, "a", encoding="utf-8") as f:
+                f.write(entry)
+        except OSError as exc:
+            raise StorageError(f"Could not write to text log file: {exc}") from exc
+
     # ------------------------------------------------------------------
     # Record CRUD operations
     # ------------------------------------------------------------------
@@ -155,6 +200,7 @@ class PasswordManager:
         """
         self.records.append(record)
         self.save()
+        self._append_record_to_text_file(record)
         return record
     def get_record_by_index(self, index: int) -> Optional[PasswordRecord]:
         """Retrieve a record by its 1-based display index.
